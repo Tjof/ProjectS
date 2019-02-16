@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,24 +13,152 @@ namespace ProjectS
 {
     public partial class Form1 : Form
     {
+        string FileName = string.Empty;
+        string FileText = string.Empty;
+        bool Changed = false;
+
         public Form1()
         {
             InitializeComponent();
         }
 
-        private void создатьToolStripMenuItem_Click(object sender, EventArgs e)
+        void Create()
         {
-
+            if (Changed)
+            {
+                DialogResult Result = MessageBox.Show("Save?", "SAVE?", MessageBoxButtons.YesNoCancel);
+                if (Result == DialogResult.Yes)
+                {
+                    SaveAs();
+                }
+                else if (Result == DialogResult.No)
+                {
+                    TBI.Text = string.Empty;
+                }
+            }
+            else
+            {
+                TBI.Text = string.Empty;
+            }
         }
 
-        private void Result_TextChanged(object sender, EventArgs e)
+        void SaveAs()
         {
+            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
 
+            saveFileDialog1.Filter = "txt files (*.txt)|*.txt";
+            saveFileDialog1.FilterIndex = 1;
+            saveFileDialog1.RestoreDirectory = true;
+
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                FileName = saveFileDialog1.FileName;
+                File.WriteAllText(FileName, TBI.Text);
+                Changed = false;
+            }
+        }
+
+        void Save()
+        {
+            if (FileName == string.Empty)
+            {
+                SaveAs();
+            }
+            else
+            {
+                File.WriteAllText(FileName, TBI.Text);
+            }
+        }
+
+        void Open()
+        {
+            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+
+            openFileDialog1.Filter = "txt files (*.txt)|*.txt|All files(*.*)|*.*";
+            openFileDialog1.FilterIndex = 2;
+            openFileDialog1.RestoreDirectory = true;
+
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                FileName = openFileDialog1.FileName;
+                FileText = File.ReadAllText(FileName);
+                TBI.Text = FileText;
+                Changed = false;
+            }
+        }
+
+        void CloseFile()
+        {
+            TBI.Text = string.Empty;
+            FileName = string.Empty;
+            Changed = false;
+        }
+
+        private void создатьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Create();
         }
 
         private void выходToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Environment.Exit(0);
+        }
+
+        private void сохранитьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Save();
+        }
+
+        private void открытьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (Changed)
+            {
+                DialogResult Result = MessageBox.Show("Save?", "SAVE?", MessageBoxButtons.YesNoCancel);
+                if (Result == DialogResult.Yes)
+                {
+                    SaveAs();
+                    Open();
+                }
+                else if (Result == DialogResult.No)
+                {
+                    Open();
+                }
+            }
+            else
+            {
+                Open();
+            }
+        }
+
+        private void TBI_TextChanged(object sender, EventArgs e)
+        {
+            Changed = true;
+        }
+
+        private void сохранитьКакToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveAs();
+        }
+
+        private void закрытьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (Changed)
+            {
+                DialogResult Result = MessageBox.Show("Save?", "SAVE?", MessageBoxButtons.YesNoCancel);
+                if (Result == DialogResult.Yes)
+                {
+                    SaveAs();
+                    CloseFile();
+                }
+                else if (Result == DialogResult.No)
+                {
+                    CloseFile();
+                }
+            }
+            else
+            {
+                CloseFile();
+            }
         }
     }
 }
