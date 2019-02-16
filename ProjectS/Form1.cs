@@ -44,17 +44,18 @@ namespace ProjectS
 
         void SaveAs()
         {
-            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
-
-            saveFileDialog1.Filter = "txt files (*.txt)|*.txt";
-            saveFileDialog1.FilterIndex = 1;
-            saveFileDialog1.RestoreDirectory = true;
-
-            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            using (SaveFileDialog saveFileDialog1 = new SaveFileDialog())
             {
-                FileName = saveFileDialog1.FileName;
-                File.WriteAllText(FileName, TBI.Text);
-                Changed = false;
+                saveFileDialog1.Filter = "txt files (*.txt)|*.txt";
+                saveFileDialog1.FilterIndex = 1;
+                saveFileDialog1.RestoreDirectory = true;
+
+                if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+                {
+                    FileName = saveFileDialog1.FileName;
+                    File.WriteAllLines(FileName, TBI.Lines);
+                    Changed = false;
+                }
             }
         }
 
@@ -81,9 +82,9 @@ namespace ProjectS
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 FileName = openFileDialog1.FileName;
-                FileText = File.ReadAllText(FileName);
-                TBI.Text = FileText;
+                TBI.Lines = File.ReadAllLines(FileName);
                 Changed = false;
+                TBI.ClearUndo();
             }
         }
 
@@ -159,6 +160,29 @@ namespace ProjectS
             {
                 CloseFile();
             }
+        }
+
+        private void отменаToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TBI.Undo();
+        }
+
+        private void копироватьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+            string SelectedText = string.Empty;
+            SelectedText = TBI.SelectedText;
+            Clipboard.SetText(SelectedText);
+        }
+
+        private void вставитьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TBI.SelectedText = Clipboard.GetText();
+        }
+
+        private void вырезатьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
