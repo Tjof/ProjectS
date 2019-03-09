@@ -184,5 +184,10 @@ namespace ProjectS
         {
 
         }
+
+        private void пускToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
