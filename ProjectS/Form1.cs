@@ -199,31 +199,68 @@ namespace ProjectS
             //    Transit /*функция переходов*/);
 
             //OutputRTB.Text = (String.Format("{0}", stateMachine.Check(str1)));
+            
+            string str = TBI.Text;
+            int i = 0;
+            char liter;
+            
 
-            State s = State.Q0;
-            string str1 = TBI.Text;
-            for (int i = 0; i < str1.Length; i++)
+            List<string> result = new List<string>();
+            while (i < str.Length)
             {
-                c = str1[i];
-                s = Transit(s, c);
-                
+                liter = str[i];
+                if (Char.IsNumber(liter))
+                {
+                    while (++i < str.Length && Char.IsNumber((liter = str[i]))) ;
+                    /*if (liter == '.')
+                    {
+                        if (Char.IsNumber(liter))
+                        {
+                            while (++i < str.Length && Char.IsNumber((liter = str[i]))) ;
+                            result.Add("num2");
+                        }
+                        if (liter == 'E' || liter == 'e')
+                        {
+                            if (Char.IsNumber(liter) || liter == '+' || liter == '-')
+                                result.Add("num2");
+                        }
+                    }*/
+                    result.Add("num1");
+                }
+                else if (Char.IsLetter(liter))
+                {
+                    while (++i < str.Length && Char.IsLetterOrDigit((liter = str[i]))) ;
+                    result.Add("Bukva");
+                }
+                else
+                {
+                    switch (liter)
+                    {
+                        case '+': i++; result.Add("+"); break;
+                        case '-': i++; result.Add("-"); break;
+                        case '/': i++; result.Add("/"); break;
+                        case '*': i++; result.Add("*"); break;
+                        case ':': i++; result.Add(":"); break;
+                        case '(': i++; result.Add("("); break;
+                        case ')': i++; result.Add(")"); break;
+                        case '.': i++; result.Add("."); break;
+                        default: i++; result.Add("Error"); break;
+                    }
+                }
             }
 
-            if (s == State.Q3 || s == State.Q4)
-            {
-                OutputRTB.Text = "Молодец!";
-            }
-            else {
-                OutputRTB.Text = "Не верно. Хнык.";
-            }
+            OutputRTB.Text = String.Join( " ", result);
+            
             
         }
 
         enum State { Q0, Q1, Q2, Q3, Q4, Q5, Error }
-        static State Transit(State s, char c)
+        State Transit(State s, char c)
         {
+            
             switch (s)
             {
+
                 case State.Q0:
                     if (c == '+' || c == '-')
                         return State.Q1;
